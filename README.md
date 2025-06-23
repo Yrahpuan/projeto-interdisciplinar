@@ -1,2 +1,2 @@
-# projeto-integrador
+# projeto-interdisciplinar
 3° nota
