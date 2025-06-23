@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel do Administrador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f0f2f5;
+    }
+    .container {
+      margin-top: 60px;
+    }
+    .card {
+      border-radius: 12px;
+    }
+    #btnMenu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      transition: opacity 0.3s ease;
+    }
+
+    #btnMenu.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Botão do menu -->
+  <button class="btn btn-secondary" type="button" id="btnMenu" data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral">
+    ☰ Menu
+  </button>
+  <!-- Menu lateral deslizante -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="menuLateralLabel">Opções</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <button class="btn btn-outline-danger w-100" onclick="deslogar()">Deslogar</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="text-center mb-5">Painel do Administrador</h2>
+
+    <div class="row g-4">
+      <!-- FUNCIONÁRIOS -->
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title">Gerenciar Funcionários</h4>
+            <p class="card-text">Ações administrativas para usuários do sistema.</p>
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAddFuncionario">Adicionar Funcionário</button>
+              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalModFuncionario">Modificar Funcionário</button>
+              <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelFuncionario">Excluir Funcionário</button>
+              <button class="btn btn-info w-100 text-white" data-bs-toggle="modal" data-bs-target="#modalPesqFuncionario">Pesquisar Funcionário</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PACIENTES -->
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title">Gerenciar Pacientes</h4>
+            <p class="card-text">Ações administrativas para pacientes registrados.</p>
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAddPaciente">Adicionar Paciente</button>
+              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalModPaciente">Modificar Paciente</button>
+              <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelPaciente">Excluir Paciente</button>
+              <button class="btn btn-info w-100 text-white" data-bs-toggle="modal" data-bs-target="#modalPesqPaciente">Pesquisar Paciente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAIS FUNCIONÁRIOS -->
+  <div class="modal fade" id="modalAddFuncionario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formAddFuncionario">
+        <div class="modal-header">
+          <h5 class="modal-title">Adicionar Funcionário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input class="form-control mb-2" id="nome" name="nome" placeholder="Nome" required>
+          <input class="form-control mb-2" id="cpf" name="cpf" placeholder="CPF" required>
+          <input class="form-control mb-2" id="data_nasc" name="data_nasc" type="date" required>
+          <input class="form-control mb-2" id="username" name="username" placeholder="Usuário" required>
+          <input class="form-control mb-2" id="password" name="password" placeholder="Senha" type="password" required>
+          <select class="form-select mb-2" id="cargo" name="cargo" required>
+            <option value="">Cargo</option>
+            <option value="administrador">Administrador</option>
+            <option value="enfermeiro">Enfermeiro</option>
+            <option value="medico">Médico</option>
+            <option value="recepcionista">Recepcionista</option>
+          </select>
+          <div id="extrasMedico" style="display: none;">
+            <input class="form-control mb-2" id="crm" name="crm" placeholder="CRM"> 
+          </div>
+          <div id="extrasEnfermeiro" style="display: none;">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="etriador" name="triador">
+              <label class="form-check-label" for="triador">É triador?</label>
+            </div> 
+          </div>          
+        </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Modificar Funcionário -->
+<div class="modal fade" id="modalModFuncionario" tabindex="-1" aria-labelledby="modalModificarFuncionarioLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="formModFuncionario">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalModificarFuncionarioLabel">Modificar Funcionário</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="form-label">CPF atual do Funcionário</label>
+          <input type="text" class="form-control" id="cpfAtual" placeholder="CPF atual" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Novo Nome</label>
+          <input type="text" class="form-control" id="novoNome" placeholder="Novo nome">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Novo CPF</label>
+          <input type="text" class="form-control" id="novoCpf" placeholder="Novo CPF">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Nova Data de Nascimento</label>
+          <input type="date" class="form-control" id="novaDataNasc">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Novo Nome de Usuário</label>
+          <input type="text" class="form-control" id="novoUsername" placeholder="Usuário">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Nova Senha</label>
+          <input type="password" class="form-control" id="novaSenha" placeholder="Senha">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Novo Cargo</label>
+          <select class="form-select mb-2" id="novoCargo">
+            <option value="">-- Manter Atual --</option>
+            <option value="administrador">Administrador</option>
+            <option value="enfermeiro">Enfermeiro</option>
+            <option value="medico">Médico</option>
+            <option value="recepcionista">Recepcionista</option>
+          </select>
+          <div id="extrasMedico2" style="display: none;">
+            <input class="form-control mb-2" id="crm2" name="crm2" placeholder="CRM">
+          </div>
+          <div id="extrasEnfermeiro2" style="display: none;">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="etriador2" name="triador2">
+              <label class="form-check-label" for="triador">É triador?</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Modificar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+  <!-- Modal: Excluir Funcionário -->
+  <div class="modal fade" id="modalDelFuncionario" tabindex="-1" aria-labelledby="modalExcluirFuncionarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formDelFuncionario">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalExcluirFuncionarioLabel">Excluir Funcionário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="cpfExcluir" class="form-label">CPF do Funcionário</label>
+            <input type="text" class="form-control" id="cpfExcluir" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+      </form>      
+    </div>
+  </div>
+
+  <!-- Modal: Pesquisar Funcionário -->
+  <div class="modal fade" id="modalPesqFuncionario" tabindex="-1" aria-labelledby="modalPesquisarFuncionarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPesquisarFuncionarioLabel">Pesquisar Funcionário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nomePesquisa" class="form-label">Nome do Funcionário</label>
+            <input type="text" class="form-control" id="nomePesquisa" name="nomePesquisa" required>
+          </div>
+          <!-- Aqui embaixo dos botões -->
+        <div class="container mt-3">
+          <table class="table table-bordered table-striped" id="tabelaResultados" style="display: none;">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Data Nasc.</th>
+                <th>Cargo</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info text-white">Pesquisar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAIS PACIENTES -->
+  <div class="modal fade" id="modalAddPaciente" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formAddPaciente">
+        <div class="modal-header">
+          <h5 class="modal-title">Adicionar Paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <label class="form-label">Nome do Paciente</label>
+          <input class="form-control mb-2" id="nomePaciente" name="nome" placeholder="Nome" required>
+          <label class="form-label">Data de Nascimento do Paciente</label>
+          <input class="form-control mb-2" id="dataNascPaciente" name="data_nasc" type="date" required>
+          <label class="form-label">CPF do Paciente</label>
+          <input class="form-control mb-2" id="cpfPaciente" name="cpf" placeholder="CPF" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <div class="modal fade" id="modalModPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formModPaciente">
+          <div class="modal-header">
+            <h5 class="modal-title">Modificar Paciente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">CPF atual</label>
+            <input class="form-control mb-2" id="cpfAtual2" placeholder="CPF existente" required>
+            <label class="form-label">Nome do Paciente</label>
+            <input class="form-control mb-2" id="novoNome2" placeholder="Novo nome">
+            <label class="form-label">Nova data de nascimento</label>
+            <input class="form-control mb-2" id="novaDataNasc2" placeholder="Nova data de nascimento" type="date">
+            <label class="form-label">Novo CPF</label>
+            <input class="form-control mb-2" id="novoCpf2" placeholder="Novo Cpf">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-warning">Atualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Excluir Paciente -->
+  <div class="modal fade" id="modalDelPaciente" tabindex="-1" aria-labelledby="modalExcluirPacienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formDelPaciente">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalExcluirPacienteLabel">Excluir Paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="cpfExcluir" class="form-label">CPF do Paciente</label>
+            <input type="text" class="form-control" id="cpfExcluir2" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+      </form>      
+    </div>
+  </div>
+
+  <!-- Modal: Pesquisar Paciente -->
+  <div class="modal fade" id="modalPesqPaciente" tabindex="-1" aria-labelledby="modalPesquisarPacienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formPesqPaciente">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPesquisarPacienteLabel">Pesquisar Paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nomePesquisa" class="form-label">Nome do Paciente</label>
+            <input type="text" class="form-control" id="nomePesquisa2" name="nomePesquisa" required>
+          </div>
+          <!-- Aqui embaixo dos botões -->
+        <div class="container mt-3">
+          <table class="table table-bordered table-striped" id="tabelaResultados2" style="display: none;">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Data Nasc.</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info text-white">Pesquisar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function deslogar() {
+      window.location.href = "login.html";
+    }
+
+    const btnMenu = document.getElementById('btnMenu');
+    const offcanvasEl = document.getElementById('menuLateral');
+
+    offcanvasEl.addEventListener('show.bs.offcanvas', () => {
+      btnMenu.classList.add('hidden');
+    });
+
+    offcanvasEl.addEventListener('hidden.bs.offcanvas', () => {
+      btnMenu.classList.remove('hidden');
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const cargoSelect = document.getElementById("cargo");
+      const extrasMedico = document.getElementById("extrasMedico");
+      const extrasEnfermeiro = document.getElementById("extrasEnfermeiro");
+
+      const novoCargoSelect = document.getElementById("novoCargo");
+      const extrasMedico2 = document.getElementById("extrasMedico2");
+      const extrasEnfermeiro2 = document.getElementById("extrasEnfermeiro2");
+  
+      cargoSelect.addEventListener("change", function () {
+        if (this.value === "medico") {
+          extrasEnfermeiro.style.display = "none";
+          extrasMedico.style.display = "block";
+        } else if(this.value === "enfermeiro"){
+          extrasMedico.style.display = "block";
+          extrasEnfermeiro.style.display = "block";
+        } else {
+          extrasMedico.style.display = "none";
+          extrasEnfermeiro.style.display = "none";
+        }
+      });
+
+      novoCargoSelect.addEventListener("change", function(){
+        if(this.value === "medico"){
+          extrasEnfermeiro2.style.display = "none";
+          extrasMedico2.style.display = "block";
+        } else if(this.value === "enfermeiro"){
+          extrasMedico2.style.display = "block";
+          extrasEnfermeiro2.style.display = "block";
+        } else{
+          extrasMedico2.style.display = "none";
+          extrasEnfermeiro2.style.display = "none";
+        }
+      });
+    });
+
+  </script>  
+  <script>
+  document.getElementById('formAddFuncionario').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    console.log(document.getElementById('data_nasc').value);
+
+    const formData = {
+      nome: document.getElementById('nome').value,
+      cpf: document.getElementById('cpf').value,
+      data_nasc: document.getElementById('data_nasc').value,
+      username: document.getElementById('username').value,
+      password: document.getElementById('password').value,
+      cargo: document.getElementById('cargo').value,
+      crm: document.getElementById("crm").value,
+      isTriador: document.getElementById("etriador").value,
+    };
+
+    try {
+      const response = await fetch('/cadastrar-funcionario', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        alert('Funcionário cadastrado com sucesso!');
+        document.getElementById('formAddFuncionario').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalAddFuncionario'));
+        modal.hide();
+      } else {
+        const error = await response.text()
+        alert('Erro ao cadastrar: ' + error);
+      }
+    } catch (err) {
+      alert('Erro na requisição: ' + err.message);
+    }
+  });
+  </script>
+
+  <script>
+document.getElementById("formModFuncionario").addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const cpfAtual = document.getElementById("cpfAtual").value;
+  const novoNome = document.getElementById("novoNome").value;
+  const novoCpf = document.getElementById("novoCpf").value;
+  const novaDataNasc = document.getElementById("novaDataNasc").value;
+  const novoUsername = document.getElementById("novoUsername").value;
+  const novaSenha = document.getElementById("novaSenha").value;
+  const novoCargo = document.getElementById("novoCargo").value;
+  const novoCrm = document.getElementById("crm2").value;
+  const isTriador = document.getElementById("etriador2").value;
+
+  try {
+    const response = await fetch("/modificar-funcionario", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        cpfAtual,
+        novoNome,
+        novoCpf,
+        novaDataNasc,
+        novoUsername,
+        novaSenha,
+        novoCargo,
+        novoCrm,
+        isTriador
+      })
+    });
+
+    const resultado = await response.json();
+
+    if (response.ok) {
+      alert("Funcionário modificado com sucesso!");
+      document.getElementById("formModFuncionario").reset();
+      const modal = bootstrap.Modal.getInstance(document.getElementById("modalModFuncionario"));
+      modal.hide();
+    } else {
+      alert("Erro ao modificar funcionário: " + resultado.message);
+    }
+  } catch (error) {
+    console.error("Erro ao enviar requisição:", error);
+    alert("Erro de rede ao modificar funcionário.");
+    }
+  });
+  </script>
+
+  <script>
+    document.getElementById("formDelFuncionario").addEventListener("submit", async function(event) {
+      event.preventDefault();
+    
+      const cpf = document.getElementById("cpfExcluir").value;
+    
+      try {
+        const response = await fetch("/excluir-funcionario", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ cpf })
+        }); 
+    
+        const resultado = await response.json();
+    
+        if (response.ok) {
+          alert("Funcionário excluído com sucesso!");
+          document.getElementById("formDelFuncionario").reset();
+          const modal = bootstrap.Modal.getInstance(document.getElementById("modalDelFuncionario"));
+          modal.hide();
+        } else {
+          alert("Erro ao excluir funcionário: " + resultado.message);
+        }
+      } catch (error) {
+        alert("Erro de rede ao excluir funcionário.");
+      }
+    });
+    </script>
+    
+    <script>
+      document.querySelector("#modalPesqFuncionario form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+    
+        const nome = document.getElementById("nomePesquisa").value.trim();
+    
+        try {
+          const response = await fetch("/pesquisar-funcionarios", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nome })
+          });
+    
+          const funcionarios = await response.json();
+    
+          const tabela = document.getElementById("tabelaResultados");
+          const tbody = tabela.querySelector("tbody");
+          tbody.innerHTML = "";
+    
+          if (funcionarios.length > 0) {
+            funcionarios.forEach(func => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${func.nome}</td>
+                <td>${func.cpf}</td>
+                <td>${func.data_nasc}</td>
+                <td>${func.cargo}</td>
+              `;
+              tbody.appendChild(row);
+            });
+            tabela.style.display = "table";
+          } else {
+            tabela.style.display = "none";
+            alert("Nenhum funcionário encontrado com esse nome.");
+          }
+    
+        } catch (err) {
+          console.error("Erro na requisição:", err);
+          alert("Erro ao buscar funcionários.");
+        }
+      });
+    </script>
+
+    <script>
+  document.getElementById('formAddPaciente').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = {
+      nome: document.getElementById('nomePaciente').value,
+      cpf: document.getElementById('cpfPaciente').value,
+      data_nasc: document.getElementById('dataNascPaciente').value
+    };
+
+    try {
+      const response = await fetch('/cadastrar-paciente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        alert('Paciente cadastrado com sucesso!');
+        document.getElementById('formAddPaciente').reset();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalAddPaciente'));
+        modal.hide();
+      } else {
+        const error = await response.text();
+        alert(error);
+      }
+    } catch (err) {
+      alert('Erro na requisição: ' + err.message);
+    }
+  });
+</script>
+
+<script>
+document.getElementById("formModPaciente").addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const cpfAtual = document.getElementById("cpfAtual2").value;
+  const novoNome = document.getElementById("novoNome2").value;
+  const novaDataNasc = document.getElementById("novaDataNasc2").value;
+  const novoCpf = document.getElementById("novoCpf2").value;
+
+  try {
+    const response = await fetch("/modificar-paciente", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cpfAtual,
+        novoNome,
+        novaDataNasc,
+        novoCpf
+      })
+    });
+
+    const resultado = await response.json();
+    console.log(resultado);
+
+    if (response.ok) {
+      alert("Paciente modificado com sucesso!");
+      document.getElementById("formModPaciente").reset();
+      bootstrap.Modal.getInstance(document.getElementById('modalModPaciente')).hide();
+    } else {
+      alert("Erro ao modificar paciente: " + resultado.message);
+    }
+
+    //document.getElementById('modalModPaciente').hide();
+
+  } catch (error) {
+    alert("Erro de rede ao modificar paciente." + error);
+  }
+});
+</script>
+
+  <script>
+    document.getElementById("formDelPaciente").addEventListener("submit", async function(event) {
+      event.preventDefault();
+    
+      const cpf = document.getElementById("cpfExcluir2").value;
+    
+      try {
+        const response = await fetch("/excluir-paciente", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ cpf })
+        });
+    
+        const resultado = await response.json();
+    
+        if (response.ok) {
+          alert("Paciente excluído com sucesso!");
+          document.getElementById("formDelPaciente").reset();
+          const modal = bootstrap.Modal.getInstance(document.getElementById("modalDelPaciente"));
+          modal.hide();
+        } else {
+          alert("Erro ao excluir paciente: " + resultado.message);
+        }
+      } catch (error) {
+        alert("Erro de rede ao excluir paciente.");
+      }
+    });
+    </script>
+    
+    <script>
+      document.querySelector("#modalPesqPaciente form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+    
+        const nome = document.getElementById("nomePesquisa2").value.trim();
+    
+        try {
+          const response = await fetch("/pesquisar-paciente", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nome })
+          });
+    
+          const pacientes = await response.json();
+    
+          const tabela = document.getElementById("tabelaResultados2");
+          const tbody = tabela.querySelector("tbody");
+          tbody.innerHTML = "";
+    
+          if (pacientes.length > 0) {
+            pacientes.forEach(paciente => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${paciente.nome}</td>
+                <td>${paciente.cpf}</td>
+                <td>${paciente.data_nasc}</td>
+              `;
+              tbody.appendChild(row);
+            });
+            tabela.style.display = "table";
+          } else {
+            tabela.style.display = "none";
+            alert("Nenhum paciente encontrado com esse nome.");
+          }
+    
+        } catch (err) {
+          console.error("Erro na requisição:", err);
+          alert("Erro ao buscar paciente.");
+        }
+      });
+    </script>
+
+</body>
+</html>

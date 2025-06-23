@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "triagensFeitas": [
+      {
+        "risco": "amarelo",
+        "sintomas": "aaa",
+        "descricao": "aaa",
+        "data": "2025-06-09T19:35:45.458Z"
+      }
+    ]
+  }
+]

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tela de Login</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .login-container {
+      max-width: 400px;
+      margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container d-flex justify-content-center align-items-center">
+    <div class="login-container bg-white p-4 rounded shadow">
+      <h2 class="text-center mb-4">Login</h2>
+      <form>
+        <div class="mb-3">
+          <label for="usuario" class="form-label">Usuário</label>
+          <input type="text" class="form-control" id="usuario" placeholder="Digite seu usuário">
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (opcional, para componentes como modais) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('usuario').value;
+      const password = document.getElementById('senha').value;
+
+      document.getElementById('usuario').value = "";
+      document.getElementById('senha').value = "";
+
+      try {
+        const resposta = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const resultado = await resposta.json();
+        alert(resultado.message);
+
+        if (resposta.ok) {
+            //localStorage.setItem('cpf', resultado.cpf);
+            // Redirecionar para a rota personalizada
+            window.location.href = resultado.destino;
+        }
+
+      } catch (erro) {
+        alert('Erro ao tentar fazer login.');
+        console.error(erro);
+      }
+    });
+  </script>
+</body>
+</html>
