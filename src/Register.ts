@@ -91,14 +91,14 @@ export class Register {
                 VALUES (?, ?, ?, ?)
                 `, name, cpf, birthDate, crm);
                 db.run(`
-                INSERT INTO login (cpf, username, password, position)
+                INSERT INTO login (cpf, nome_de_usuario, senha, cargo)
                 VALUES (?, ?, ?, ?)
                 `, cpf, username, password, position);
 
                 if(isTriator){
                     const nurse = db.get("select id from enfermeiro where cpf = ?", cpf);
                     db.run("insert into triador (enfermeiro_id) values (?)", [nurse.id]);
-                    db.run(`update login set position = ? where cpf = ?`, ["triador", cpf]);
+                    db.run(`update login set cargo = ? where cpf = ?`, ["triador", cpf]);
                 }
             }else{
 
@@ -106,9 +106,8 @@ export class Register {
                 INSERT INTO ${position} (nome, cpf, data_nasc)
                 VALUES (?, ?, ?)
                 `, name, cpf, birthDate);
-                // Inserir na tabela de login
                 db.run(`
-                INSERT INTO login (cpf, username, password, position)
+                INSERT INTO login (cpf, nome_de_usuario, senha, cargo)
                 VALUES (?, ?, ?, ?)
                 `, cpf, username, password, position);
                 }
@@ -133,7 +132,7 @@ export class Register {
         const db = new DatabaseWrapper(databaseName);
 
         const employeeLogin = db.get("SELECT * FROM login WHERE cpf = ?", [actualCpf]);
-        let actualPosition = employeeLogin.position.split("/")[0];
+        let actualPosition = employeeLogin.cargo.split("/")[0];
         let employee =
         db.get("SELECT * FROM recepcionista WHERE cpf = ?", [actualCpf]) ||
         db.get("SELECT * FROM medico WHERE cpf = ?", [actualCpf]) ||
@@ -148,8 +147,8 @@ export class Register {
             const name = newName || employee.nome;
             const cpf = newCpf || employee.cpf;
             const birthDate = newBirthDate || employee.data_nasc;
-            const username = newUsername || employeeLogin.username;
-            const password = newPassword || employeeLogin.password;
+            const username = newUsername || employeeLogin.nome_de_usuario;
+            const password = newPassword || employeeLogin.senha;
             const position = newPosition || actualPosition;
             const crm = newCrm || employee.crm;
 
@@ -193,20 +192,20 @@ export class Register {
             }
 
             const changedLogin =
-            username !== employeeLogin.username ||
-            password !== employeeLogin.password ||
-            position !== employeeLogin.position ||
+            username !== employeeLogin.nome_de_usuario ||
+            password !== employeeLogin.senha ||
+            position !== employeeLogin.cargo ||
             cpf !== employeeLogin.cpf;
 
             if (changedLogin) {
                 if(position === "enfermeiro" && isTriator){
                     db.run(
-                    `UPDATE login SET cpf = ?, username = ?, password = ?, position = ? WHERE cpf = ?`,
+                    `UPDATE login SET cpf = ?, nome_de_usuario = ?, senha = ?, cargo = ? WHERE cpf = ?`,
                     [cpf, username, password, "triador", actualCpf]
                     );
             }else{
                 db.run(
-                `UPDATE login SET cpf = ?, username = ?, password = ?, position = ? WHERE cpf = ?`,
+                `UPDATE login SET cpf = ?, nome_de_usuario = ?, senha = ?, cargo = ? WHERE cpf = ?`,
                 [cpf, username, password, position, actualCpf]
                 );
                 }

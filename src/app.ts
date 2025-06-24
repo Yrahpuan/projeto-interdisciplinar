@@ -23,21 +23,21 @@ app.post('/login', (req, res) => {
 
   const { username, password } = req.body;
 
-  const user = db.get<{ cpf: string, username: string, password: string, position: string }>(
-    'SELECT * FROM login WHERE username = ? AND password = ?',
+  const user = db.get<{ cpf: string, nome_de_usuario: string, senha: string, cargo: string }>(
+    'SELECT * FROM login WHERE nome_de_usuario = ? AND senha = ?',
     username,
     password
   );
 
   if (user) {
     let destiny = '';
-    if (user.position === 'administrador') {
+    if (user.cargo === 'administrador') {
       destiny = '/menu-administrador.html';
-    } else if (user.position === 'medico') {
+    } else if (user.cargo === 'medico') {
       destiny = '/fila.html';
-    }else if (user.position === 'triador') {
+    }else if (user.cargo === 'triador') {
       destiny = '/triagem.html';
-    } else if (user.position === 'recepcionista') {
+    } else if (user.cargo === 'recepcionista') {
       destiny = '/menu-recepcionista.html';
     }else{
       res.status(401).json({ success: false, message: 'função para o cargo não implementada' });
