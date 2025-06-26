@@ -5,11 +5,11 @@ const db = new DatabaseWrapper(databaseName);
 
 db.run("delete from recepcionista");
 db.run("drop table recepcionista");
-db.run("CREATE TABLE recepcionista(id integer not null, nome varchar(100) not null, cpf char(11) not null, data_nasc varchar(100) not null, primary key(id autoincrement))");
+db.run("CREATE TABLE recepcionista(id integer not null, nome varchar(100) not null, cpf char(11) not null unique, data_nasc varchar(100) not null, primary key(id autoincrement))");
 
 db.run("delete from administrador");
 db.run("drop table administrador");
-db.run("CREATE TABLE administrador( id integer not null, nome varchar(100) not null, cpf char(11) not null, data_nasc varchar(100) not null, primary key(id autoincrement))");
+db.run("CREATE TABLE administrador( id integer not null, nome varchar(100) not null, cpf char(11) not null unique, data_nasc varchar(100) not null, primary key(id autoincrement))");
 
 db.run("delete from triador");
 db.run("drop table triador");
@@ -17,11 +17,11 @@ db.run("CREATE TABLE triador(enfermeiro_id integer not null, foreign key(enferme
 
 db.run("delete from enfermeiro");
 db.run("drop table enfermeiro");
-db.run("CREATE TABLE enfermeiro(id integer not null, nome varchar(100) not null, cpf char(11) not null, data_nasc varchar(100) not null, crm varchar(100) not null, primary key(id autoincrement))");
+db.run("CREATE TABLE enfermeiro(id integer not null, nome varchar(100) not null, cpf char(11) not null unique, data_nasc varchar(100) not null, crm char(6) not null unique, primary key(id autoincrement))");
 
 db.run("delete from medico");
 db.run("drop table medico");
-db.run("CREATE TABLE medico(id integer not null, nome varchar(100) not null, cpf varchar(11) not null, data_nasc varchar(100) not null, crm varchar(100) not null, primary key(id autoincrement))");
+db.run("CREATE TABLE medico(id integer not null, nome varchar(100) not null, cpf char(11) not null unique, data_nasc varchar(100) not null, crm char(6) not null unique, primary key(id autoincrement))");
 
 db.run("delete from fila_para_triagem");
 db.run("drop table fila_para_triagem");
@@ -37,7 +37,7 @@ db.run("CREATE TABLE fila_de_prioridade(paciente_id integer not null, senha varc
 
 db.run("delete from paciente");
 db.run("drop table paciente");
-db.run("CREATE TABLE paciente(id integer not null, cpf char(11) not null, nome varchar(100) not null, data_nasc varchar(100) not null, primary key(id autoincrement))");
+db.run("CREATE TABLE paciente(id integer not null, cpf char(11) not null unique, nome varchar(100) not null, data_nasc varchar(100) not null, primary key(id autoincrement))");
 
 db.run("delete from login");
 db.run("drop table login");

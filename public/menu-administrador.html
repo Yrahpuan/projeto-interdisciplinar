@@ -351,7 +351,7 @@
 
   <script>
     function deslogar() {
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
     const btnMenu = document.getElementById('btnMenu');
@@ -380,10 +380,13 @@
         if (this.value === "medico") {
           extrasEnfermeiro.style.display = "none";
           extrasMedico.style.display = "block";
+          document.getElementById("etriador").value = "";
         } else if(this.value === "enfermeiro"){
           extrasMedico.style.display = "block";
           extrasEnfermeiro.style.display = "block";
         } else {
+          document.getElementById("etriador").value = "off";
+          document.getElementById("crm").value = "";
           extrasMedico.style.display = "none";
           extrasEnfermeiro.style.display = "none";
         }
@@ -393,10 +396,13 @@
         if(this.value === "medico"){
           extrasEnfermeiro2.style.display = "none";
           extrasMedico2.style.display = "block";
+          document.getElementById("etriador2").value = "off";
         } else if(this.value === "enfermeiro"){
           extrasMedico2.style.display = "block";
           extrasEnfermeiro2.style.display = "block";
         } else{
+          document.getElementById("etriador2").value = "off";
+          document.getElementById("crm2").value = "";
           extrasMedico2.style.display = "none";
           extrasEnfermeiro2.style.display = "none";
         }
@@ -420,6 +426,8 @@
       crm: document.getElementById("crm").value,
       isTriador: document.getElementById("etriador").value,
     };
+
+    document.getElementById("etriador").value = "off";
 
     try {
       const response = await fetch('/cadastrar-funcionario', {
@@ -478,6 +486,8 @@ document.getElementById("formModFuncionario").addEventListener("submit", async f
       })
     });
 
+    document.getElementById("etriador2").value = "off";
+
     const resultado = await response.json();
 
     if (response.ok) {
@@ -486,7 +496,7 @@ document.getElementById("formModFuncionario").addEventListener("submit", async f
       const modal = bootstrap.Modal.getInstance(document.getElementById("modalModFuncionario"));
       modal.hide();
     } else {
-      alert("Erro ao modificar funcionário: " + resultado.message);
+      alert("Erro ao modificar funcionário: " + resultado);
     }
   } catch (error) {
     console.error("Erro ao enviar requisição:", error);
@@ -518,7 +528,7 @@ document.getElementById("formModFuncionario").addEventListener("submit", async f
           const modal = bootstrap.Modal.getInstance(document.getElementById("modalDelFuncionario"));
           modal.hide();
         } else {
-          alert("Erro ao excluir funcionário: " + resultado.message);
+          alert("Erro ao excluir funcionário: " + resultado);
         }
       } catch (error) {
         alert("Erro de rede ao excluir funcionário.");
@@ -634,7 +644,7 @@ document.getElementById("formModPaciente").addEventListener("submit", async func
       document.getElementById("formModPaciente").reset();
       bootstrap.Modal.getInstance(document.getElementById('modalModPaciente')).hide();
     } else {
-      alert("Erro ao modificar paciente: " + resultado.message);
+      alert("Erro ao modificar paciente: " + resultado);
     }
 
     //document.getElementById('modalModPaciente').hide();
@@ -668,7 +678,7 @@ document.getElementById("formModPaciente").addEventListener("submit", async func
           const modal = bootstrap.Modal.getInstance(document.getElementById("modalDelPaciente"));
           modal.hide();
         } else {
-          alert("Erro ao excluir paciente: " + resultado.message);
+          alert("Erro ao excluir paciente: " + resultado);
         }
       } catch (error) {
         alert("Erro de rede ao excluir paciente.");

@@ -36,6 +36,40 @@
     </div>
   </div>
 
+  <!-- Modal: Pesquisar Paciente -->
+  <div class="modal fade" id="modalPesqPaciente" tabindex="-1" aria-labelledby="modalPesquisarPacienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formPesqPaciente">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPesquisarPacienteLabel">Pesquisar Paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nomePesquisa" class="form-label">Nome do Paciente</label>
+            <input type="text" class="form-control" id="nomePesquisa2" name="nomePesquisa" required>
+          </div>
+          <!-- Aqui embaixo dos botões -->
+        <div class="container mt-3">
+          <table class="table table-bordered table-striped" id="tabelaResultados2" style="display: none;">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Data Nasc.</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info text-white">Pesquisar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <h1>Registro de Triagem</h1>
   <form id="form-triagem">
     <div class="form-group">
@@ -61,13 +95,14 @@
       <textarea class="form-control" id="descricao" rows="3"></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Registrar</button>
+    <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalPesqPaciente">Pesquisar Paciente</button>
   </form>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     function deslogar() {
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
     const btnMenu = document.getElementById('btnMenu');
@@ -107,5 +142,50 @@
 
   });
   </script>
+
+  <script>
+    document.querySelector("#modalPesqPaciente form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+  
+      const nome = document.getElementById("nomePesquisa2").value.trim();
+  
+      try {
+        const response = await fetch("/pesquisar-paciente", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nome })
+        });
+  
+        const pacientes = await response.json();
+  
+        const tabela = document.getElementById("tabelaResultados2");
+        const tbody = tabela.querySelector("tbody");
+        tbody.innerHTML = "";
+  
+        if (pacientes.length > 0) {
+          pacientes.forEach(paciente => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${paciente.nome}</td>
+              <td>${paciente.cpf}</td>
+              <td>${paciente.data_nasc}</td>
+            `;
+            tbody.appendChild(row);
+          });
+          tabela.style.display = "table";
+        } else {
+          tabela.style.display = "none";
+          alert("Nenhum paciente encontrado com esse nome.");
+        }
+  
+      } catch (err) {
+        console.error("Erro na requisição:", err);
+        alert("Erro ao buscar paciente.");
+      }
+    });
+  </script>
+
 </body>
 </html>

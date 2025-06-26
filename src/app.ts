@@ -83,7 +83,7 @@ app.put("/modificar-funcionario", (req, res) => {
     const result = new Register().modifyEmployee(cpfAtual, novoNome, novoCpf, novaDataNasc,
     novoUsername, novaSenha, novoCargo, novoCrm, isTriador);
 
-    res.status(result.status).json({ message: result.message });
+    res.status(result!.status).json({ message: result!.message });
 
   } catch (error) {
     console.error("Erro ao modificar funcionário:", error);

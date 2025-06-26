@@ -57,6 +57,7 @@ db.run("create table triador(enfermeiro_id integer not null, foreign key(enferme
 console.log(db.all("select * from enfermeiro"));
 console.log(db.all("select * from medico"));
 console.log(db.all("select * from triador"));
+console.log(db.all("select * from administrador"));
 console.log(db.all("select * from login"));
 //console.log(db.get("select * from triador where medico_id = 1"));
 console.log(db.all("select * from fila_para_triagem"));
