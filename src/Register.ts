@@ -60,7 +60,7 @@ export class Register {
 
         return pacients;
     }
-    registerEmployee(name: string, cpf: string, birthDate: string, username: string, password: string, position: string, crm: string, isTriator: string){
+    registerEmployee(name: string, cpf: string, birthDate: string, username: string, password: string, position: string, crm: string, isTriator: number){
         const db = new DatabaseWrapper(databaseName);
 
         console.log(
@@ -104,7 +104,7 @@ export class Register {
                 VALUES (?, ?, ?, ?)
                 `, cpf, username, password, position);
 
-                if(isTriator.toLowerCase() === "on"){
+                if(isTriator === 1){
                     const nurse = db.get("select id from enfermeiro where cpf = ?", cpf);
                     db.run("insert into triador (enfermeiro_id) values (?)", [nurse.id]);
                     db.run(`update login set cargo = ? where cpf = ?`, ["triador", cpf]);
@@ -138,12 +138,12 @@ export class Register {
     }
     modifyEmployee(actualCpf: string, newName: string, newCpf: string,
         newBirthDate: string, newUsername: string, newPassword: string,
-        newPosition: string, newCrm: string, isTriator: string){
+        newPosition: string, newCrm: string, isTriator: number){
 
         const db = new DatabaseWrapper(databaseName);
 
         const employeeLogin = db.get("SELECT * FROM login WHERE cpf = ?", [actualCpf]);
-        let actualPosition = employeeLogin.cargo;
+        let actualPosition = employeeLogin.cargo === "triador" ? "enfermeiro" : employeeLogin.cargo;
         let employee =
         db.get("SELECT * FROM recepcionista WHERE cpf = ?", [actualCpf]) ||
         db.get("SELECT * FROM medico WHERE cpf = ?", [actualCpf]) ||
@@ -160,15 +160,20 @@ export class Register {
             const birthDate = newBirthDate !== employee.data_nasc && newBirthDate !== "" ? newBirthDate : employee.data_nasc;
             const username = newUsername !== employeeLogin.nome_de_usuario && newUsername !== "" ? newUsername : employeeLogin.nome_de_usuario;
             const password = newPassword !== employeeLogin.senha && newPassword !== "" ? newPassword : employeeLogin.senha;
-            const position = newPosition !== actualPosition && newPosition !== "" ? newPosition : actualPosition;
+            let position = newPosition !== actualPosition && newPosition !== "" ? newPosition : actualPosition;
             const crm = newCrm !== employee.crm && newCrm !== "" ? newCrm : employee.crm;
 
+            console.log(isTriator);
+
             if (position !== actualPosition) {
-                console.log("entrou9");
+                if(actualPosition === "enfermeiro"){
+                    const nurse = db.get("select id from enfermeiro where cpf = ?", cpf);
+                    db.run("delete from triador where enfermeiro_id = ?", nurse.id);
+                }
                 db.run(`DELETE FROM ${actualPosition} WHERE cpf = ?`, [actualCpf]);
                 if(position === "enfermeiro" || position === "medico"){
                     db.run(`INSERT INTO ${position} (nome, cpf, data_nasc, crm) VALUES (?, ?, ?, ?)`, [name, cpf, birthDate, newCrm]);
-                    if(isTriator.toLowerCase() === "on" && position === "enfermeiro"){
+                    if(isTriator === 1 && position === "enfermeiro"){
                         const nurse = db.get("select id from enfermeiro where cpf = ?", cpf);
                         db.run("insert into triador (enfermeiro_id) values (?)", nurse.id);
                     }
@@ -203,14 +208,18 @@ export class Register {
                 }
             }
 
+            position = position === "enfermeiro" && isTriator === 1 ? "triador" : position;
+
             const changedLogin =
             username !== employeeLogin.nome_de_usuario ||
             password !== employeeLogin.senha ||
             position !== employeeLogin.cargo ||
             cpf !== employeeLogin.cpf;
 
+            console.log(changedLogin);
+
             if (changedLogin) {
-                if(position === "enfermeiro" && isTriator.toLowerCase() === "on"){
+                if(position === "triador"){
                     db.run(
                     `UPDATE login SET cpf = ?, nome_de_usuario = ?, senha = ?, cargo = ? WHERE cpf = ?`,
                     [cpf, username, password, "triador", employee.cpf]

@@ -380,12 +380,10 @@
         if (this.value === "medico") {
           extrasEnfermeiro.style.display = "none";
           extrasMedico.style.display = "block";
-          document.getElementById("etriador").value = "";
         } else if(this.value === "enfermeiro"){
           extrasMedico.style.display = "block";
           extrasEnfermeiro.style.display = "block";
         } else {
-          document.getElementById("etriador").value = "off";
           document.getElementById("crm").value = "";
           extrasMedico.style.display = "none";
           extrasEnfermeiro.style.display = "none";
@@ -396,12 +394,10 @@
         if(this.value === "medico"){
           extrasEnfermeiro2.style.display = "none";
           extrasMedico2.style.display = "block";
-          document.getElementById("etriador2").value = "off";
         } else if(this.value === "enfermeiro"){
           extrasMedico2.style.display = "block";
           extrasEnfermeiro2.style.display = "block";
         } else{
-          document.getElementById("etriador2").value = "off";
           document.getElementById("crm2").value = "";
           extrasMedico2.style.display = "none";
           extrasEnfermeiro2.style.display = "none";
@@ -414,8 +410,6 @@
   document.getElementById('formAddFuncionario').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    console.log(document.getElementById('data_nasc').value);
-
     const formData = {
       nome: document.getElementById('nome').value,
       cpf: document.getElementById('cpf').value,
@@ -424,10 +418,8 @@
       password: document.getElementById('password').value,
       cargo: document.getElementById('cargo').value,
       crm: document.getElementById("crm").value,
-      isTriador: document.getElementById("etriador").value,
+      isTriador: document.getElementById("etriador").checked ? 1 : 0,
     };
-
-    document.getElementById("etriador").value = "off";
 
     try {
       const response = await fetch('/cadastrar-funcionario', {
@@ -465,7 +457,7 @@ document.getElementById("formModFuncionario").addEventListener("submit", async f
   const novaSenha = document.getElementById("novaSenha").value;
   const novoCargo = document.getElementById("novoCargo").value;
   const novoCrm = document.getElementById("crm2").value;
-  const isTriador = document.getElementById("etriador2").value;
+  const isTriador = document.getElementById("etriador2").checked ? 1 : 0;
 
   try {
     const response = await fetch("/modificar-funcionario", {
@@ -485,8 +477,6 @@ document.getElementById("formModFuncionario").addEventListener("submit", async f
         isTriador
       })
     });
-
-    document.getElementById("etriador2").value = "off";
 
     const resultado = await response.json();
 

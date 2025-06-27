@@ -54,18 +54,18 @@ db.run("delete from triador");
 db.run("drop table triador");
 db.run("create table triador(enfermeiro_id integer not null, foreign key(enfermeiro_id) references enfermeiro(id), primary key(enfermeiro_id))")
 */
-console.log(db.all("select * from enfermeiro"));
+//console.log(db.all("select * from enfermeiro"));
 console.log(db.all("select * from medico"));
-console.log(db.all("select * from triador"));
-console.log(db.all("select * from administrador"));
+//console.log(db.all("select * from triador"));
+//console.log(db.all("select * from administrador"));
 console.log(db.all("select * from login"));
 //console.log(db.get("select * from triador where medico_id = 1"));
-console.log(db.all("select * from fila_para_triagem"));
-console.log(db.all("select * from triagem"));
-console.log(db.all("select * from classificacao_de_risco"));
+//console.log(db.all("select * from fila_para_triagem"));
+//console.log(db.all("select * from triagem"));
+//console.log(db.all("select * from classificacao_de_risco"));
 //db.run("update senhas set contador = 0");
-console.log(db.all("select * from senhas"));
-console.log(db.all("select * from fila_de_prioridade"));
+//console.log(db.all("select * from senhas"));
+//console.log(db.all("select * from fila_de_prioridade"));
 
 const b = "ab";
 
